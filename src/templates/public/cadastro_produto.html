@@ -21,7 +21,7 @@
                     </button>
                 </div>
             <div class="modal-body">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     <label for="descricao" class="label_block">Descrição</label>
                     <input type="text" name="prodes">
 
@@ -55,9 +55,12 @@
                     </select>
                 </div>
 
+                <input type="file" name="img_prod" id="img_prod" accept="image/*">
+                
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Cadastar</button>
                 </div>
+
 
                 </form>
             </div>

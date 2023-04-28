@@ -7,6 +7,7 @@ from hashlib import sha256
 from src.methods.loginManager.manager import *
 from datetime import timedelta
 import json
+import os
 
 app = Flask(__name__)
 
@@ -88,10 +89,16 @@ class cadastro_produto_controller(MethodView):
         proprc = request.form["proprc"]
         protrib = request.form["protrib"]
         proncm = request.form["proncm"]
+        proimg = request.files.get("img_prod")
 
         with mysql.cursor() as cur:
-            cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm) VALUES(null, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm))
+            nome_arquivo_img = proimg.filename
+            arquivo, extensao = os.path.splitext(nome_arquivo_img)
+            DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img"
+            
+            cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm, proimg) VALUES(null, %s, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm, nome_arquivo_img))
             cur.connection.commit()
+            proimg.save(os.path.join(DIRETORIO, "img-" + prodes + extensao))
         return redirect("/cadastro/produto")
     
 class cadastro_secao_controller(MethodView):
