@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login highsys</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    {% include "partials/msg.html" %}
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+          <!-- Tabs Titles -->
+      
+          <!-- Icon -->
+          <div class="fadeIn first">
+            <img src="static/img/logo1.png" id="icon"/>
+          </div>
+      
+          <!-- Login Form -->
+          <form action="" method="post">
+            <input type="text" id="login" class="fadeIn second" name="usuario" placeholder="Usuário" required="true">
+            <input type="password" id="password" class="fadeIn third" name="senha" placeholder="Senha" required="true">
+            <input type="submit" class="fadeIn fourth" value="Login" id="button_login">
+          </form>
+        </div>
+      </div>
+</body>
+</html>

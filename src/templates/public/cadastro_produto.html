@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="GET" id="form_busca_produto">
+        <label for=""></label>
+        <input type="text" placeholder="Buscar por descrição do produto" id="busca_produto" name="profilter">
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Novo produto
+        </button>
+    </form>
+          
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Novo produto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <div class="modal-body">
+                <form method="POST">
+                    <label for="descricao" class="label_block">Descrição</label>
+                    <input type="text" name="prodes">
+
+                    <label for="secao" class="label_block">Seção</label>
+                    <select name="prosec" id="select_secao">
+                        <option value="">---------</option>
+                        {% for secao in secoes %}
+                            <option value="{{secao[0]}}">{{secao[1]}}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="/cadastro/secao" target="_blank"><i class="fa-solid fa-circle-plus"></i></a>
+                    <a id="atualiza_secao"><i class="fa-solid fa-arrows-rotate"></i></a>
+
+                    <label for="preco" class="label_block">Preço</label>
+                    <input type="number" name="proprc" step="0.01" min="0.01">
+                    
+                    <label for="tributacao" class="label_block">Tributação</label>
+                    <select name="protrib">
+                        <option value="">---------</option>
+                        {% for tributacao in tributacoes %}
+                            <option value="{{tributacao[0]}}">{{tributacao[0]}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="ncm" class="label_block">NCM</label>
+                    <select name="proncm">
+                        <option value="">---------</option>
+                        {% for ncm in ncms %}
+                            <option value="{{ncm[0]}}">{{ncm[0]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Cadastar</button>
+                </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" id="tb_cod_pro" style="text-align: center;">Código</th>
+                <th scope="col">Descrição</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+                <tr class="lista">
+                    <td scope="row" style="text-align: center;">{{produto[0]}}</td>
+                    <td class="descricao_produto">{{produto[1]}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+
+      <!--
+      <script>
+        var xhr = new XMLHttpRequest();
+        var documento;
+
+        xhr.response = "json";
+
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4 && xhr.status == 200)
+                documento=xhr.response;
+                console.log(documento);
+        }
+
+        xhr.open("GET", "https://railway.app/project/7c7b1cf4-29ec-475f-beda-a54c155928fe/plugin/93776095-b346-4746-8c62-b7499d212b36/data?state=table&table=produto");
+
+        xhr.send();
+
+      </script> -->
+
+    <script type="text/javascript">
+        $('#busca_produto').keyup(function() {
+            var termo = $('#busca_produto').val().toUpperCase();
+            $('.lista').each(function(){
+                if($(this).text().toUpperCase().indexOf(termo) === -1){
+                    $(this).hide();
+                }
+                else
+                    $(this).show();
+            });
+        });
+
+        $('#atualiza_secao').click(function(){
+            $.getJSON("http://localhost:4000/get/secao", function(resultado){
+
+                $('#select_secao').html('<select name="prosec" id="select_secao"><option value="">---------</option>');
+                resultado.forEach(secao => {
+                    $('#select_secao').append("<option value=' " + secao["seccod"] + " '>" + secao["secdes"] +"</option>")
+                });
+                $('#select_secao').append("</select>")
+            });
+            
+        });
+
+    </script>
+
+{% endblock %}

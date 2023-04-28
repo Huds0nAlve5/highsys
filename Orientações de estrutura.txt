@@ -1,0 +1,19 @@
+python -m venv venv
+
+criar pasta src (pasta de codigo)
+	controller
+	routes
+	static
+		css
+		js
+	templates
+	app.py
+	db.py
+main.py
+
+** instalar flask dentro do venv
+cd venv
+scripts/activate
+cd ..
+pip install flask
+pip install pymysql

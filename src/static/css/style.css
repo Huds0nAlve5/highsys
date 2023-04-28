@@ -1,0 +1,52 @@
+#mensagem{
+    width: 500px;
+    position: absolute;
+    z-index: 1;
+    right: 0px;
+}
+
+#menu{
+    font-weight: 700;
+}
+
+#logout{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#button_logout{
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    font-weight: 700;
+    background-color: inherit; 
+}
+
+#img_logout{
+    margin-left: 5px;
+}
+
+#busca_produto{
+    height: 35px;
+    width: 500px;
+}
+
+#form_busca_produto{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tb_cod_pro{
+    width: 100px;
+}
+
+.table th{
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.label_block{
+    display: block;
+}
