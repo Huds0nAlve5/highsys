@@ -22,15 +22,12 @@ login_manager = LoginManager(app)
 
 #controller
 
-def renovar_sessao():
-    app.permanent_session_lifetime = timedelta(minutes=30)
-
 class login_controller(MethodView):
     def get(self):
         if(current_user.is_authenticated == False):
             return render_template("login.html")
         else:
-            renovar_sessao()
+            app.permanent_session_lifetime = timedelta(minutes=30)
             return render_template("public/home.html")
 
     def post(self):
@@ -57,6 +54,7 @@ class login_controller(MethodView):
                             if(senha_cript == senha_bd):
                                 user_obj = User(user[0], user[1], user[2])
                                 login_user(user_obj)
+                                flash('Cadastro realizado', 'sucess')
                                 return redirect("/")
                             else:
                                 flash('Senha inválida', 'error')
@@ -71,7 +69,7 @@ class login_controller(MethodView):
 class cadastro_produto_controller(MethodView):
     @login_required
     def get(self):
-        renovar_sessao()
+        app.permanent_session_lifetime = timedelta(minutes=30)
         with mysql.cursor() as cur:
             cur.execute("select * from produto")
             produtos = cur.fetchall()
@@ -92,28 +90,51 @@ class cadastro_produto_controller(MethodView):
         proimg = request.files.get("img_prod")
 
         with mysql.cursor() as cur:
-            nome_arquivo_img = proimg.filename
-            arquivo, extensao = os.path.splitext(nome_arquivo_img)
-            DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img"
-            
-            cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm, proimg) VALUES(null, %s, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm, nome_arquivo_img))
-            cur.connection.commit()
-            proimg.save(os.path.join(DIRETORIO, "img-" + prodes + extensao))
+            try:
+                nome_arquivo_img = proimg.filename
+                arquivo, extensao = os.path.splitext(nome_arquivo_img)
+                DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img\\produtos"
+                
+                cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm, proimg) VALUES(null, %s, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm, "img-" + prodes + extensao))
+                cur.connection.commit()
+                proimg.save(os.path.join(DIRETORIO, "img-" + prodes + extensao))
+
+                flash("Cadastro realizado com sucesso!", "sucess")
+            except:
+                flash("Erro no cadastro.", "error")
         return redirect("/cadastro/produto")
+    
+class delete_produto_controller(MethodView):
+    @login_required
+    def get(self, procod):
+        with mysql.cursor() as cur:
+            try:
+                cur.execute("delete from produto where procod = %s", (procod))
+                cur.connection.commit()
+                flash("Produto excluído com sucesso", "sucess")
+            except:
+                flash("Erro na exclusão de produtos", "error")
+            return redirect("/cadastro/produto")
     
 class cadastro_secao_controller(MethodView):
     def get(self):
+        app.permanent_session_lifetime = timedelta(minutes=30)
         return render_template("public/cadastro_secao.html")
     def post(self):
         secdes = request.form["secdes"]
 
         with mysql.cursor() as cur:
-            cur.execute("INSERT INTO secao VALUES(null, %s)", (secdes))
-            cur.connection.commit()
+            try:
+                cur.execute("INSERT INTO secao VALUES(null, %s)", (secdes))
+                cur.connection.commit()
+                flash("Cadastro realizado com sucesso!", "sucess")
+            except:
+                flash("Erro no cadastro" , "error")
         return redirect("/")
 
 class get_secao_controller(MethodView):
     def get(self):
+        app.permanent_session_lifetime = timedelta(minutes=30)
         with mysql.cursor() as cur:
             cur.execute("select * from secao")
             secoes = cur.fetchall()
@@ -135,7 +156,7 @@ class get_secao_controller(MethodView):
 class cadastro_usuario_controller(MethodView):
     @login_required
     def get(self):
-        renovar_sessao()
+        app.permanent_session_lifetime = timedelta(minutes=30)
         return render_template("public/cadastro_usuario.html")
     @login_required
     def post(self):
@@ -185,6 +206,7 @@ def nao_encontrado(e):
 routes = {
     "login": "/", "login_controller":login_controller.as_view("login"),
     "cadastro_produto":"/cadastro/produto", "cadastro_produto_controller":cadastro_produto_controller.as_view("cadastro_produto"),
+    "deletar_produto":"/deletar/produto/<int:procod>", "delete_produto_controller":delete_produto_controller.as_view("deletar_produto"),
     "get_secao":"/get/secao", "get_secao_controller":get_secao_controller.as_view("get_secao"),
     "cadastro_secao":"/cadastro/secao", "cadastro_secao_controller":cadastro_secao_controller.as_view("cadastro_secao"),
     "cadastro_usuario":"/cadastro/usuario", "cadastro_usuario_controller":cadastro_usuario_controller.as_view("cadastro_usuario"),
@@ -196,6 +218,7 @@ routes = {
 
 app.add_url_rule(routes["login"], view_func=routes["login_controller"])
 app.add_url_rule(routes["cadastro_produto"], view_func=routes["cadastro_produto_controller"])
+app.add_url_rule(routes["deletar_produto"], view_func=routes["delete_produto_controller"])
 app.add_url_rule(routes["get_secao"], view_func=routes["get_secao_controller"])
 app.add_url_rule(routes["cadastro_secao"], view_func=routes["cadastro_secao_controller"])
 app.add_url_rule(routes["cadastro_usuario"], view_func=routes["cadastro_usuario_controller"])

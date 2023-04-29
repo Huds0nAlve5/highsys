@@ -30,6 +30,9 @@
 #busca_produto{
     height: 35px;
     width: 500px;
+    text-align: center;
+    border-radius: 10px;
+
 }
 
 #form_busca_produto{
@@ -49,4 +52,37 @@
 
 .label_block{
     display: block;
+}
+
+#logo_mini{
+    background-image: url("..\\img\\logos\\logo-mini45.png");
+    width: 45px;
+    height: 44px; 
+}
+
+#opcoes_menu{
+    border-left: 1px solid white;
+    margin-left: 10px;
+    padding-left: 8px;
+}
+
+#foto_prod{
+    height: 150px;
+    width: 15   0px;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 100%;
+    text-align: center;
+    align-items: center;
+    position: absolute;
+    right: 10px;
+    top:40px;
+}
+
+.fa-circle-xmark:hover{
+    color: rgb(223, 40, 40);
+}
+
+.fa-pen-to-square:hover{
+    color: rgba(9, 9, 153, 0.555);
 }

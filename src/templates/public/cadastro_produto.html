@@ -3,7 +3,7 @@
 {% block content %}
     <form method="GET" id="form_busca_produto">
         <label for=""></label>
-        <input type="text" placeholder="Buscar por descrição do produto" id="busca_produto" name="profilter">
+        <input type="text" placeholder="Buscar por produto" id="busca_produto" name="profilter">
 
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
             Novo produto
@@ -21,9 +21,9 @@
                     </button>
                 </div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" id="form-cadastro">
                     <label for="descricao" class="label_block">Descrição</label>
-                    <input type="text" name="prodes">
+                    <input type="text" name="prodes" class="upper_text" maxlength="60">
 
                     <label for="secao" class="label_block">Seção</label>
                     <select name="prosec" id="select_secao">
@@ -53,14 +53,16 @@
                             <option value="{{ncm[0]}}">{{ncm[0]}}</option>
                         {% endfor %}
                     </select>
+
+                    <img id="foto_prod" src="https://st2.depositphotos.com/6831718/10851/v/600/depositphotos_108517590-stock-illustration-photo-camera-icon-photo-camera.jpg">
+                    <input type="file" name="img_prod" id="img_prod" accept="image/jpg, image/jpeg, image/png" style="display: none;">
                 </div>
 
-                <input type="file" name="img_prod" id="img_prod" accept="image/*">
-                
+
                 <div class="modal-footer">
+                    <button type="button" id="btn-limpar" class="btn btn-secondary">Limpar</button>
                     <button type="submit" class="btn btn-primary">Cadastar</button>
                 </div>
-
 
                 </form>
             </div>
@@ -72,6 +74,9 @@
             <tr>
                 <th scope="col" id="tb_cod_pro" style="text-align: center;">Código</th>
                 <th scope="col">Descrição</th>
+                <th scope="col">Estoque</th>
+                <th scope="col">Preço</th>
+                <th scope="col" colspan="2"></th>
             </tr>
         </thead>
         <tbody>
@@ -79,6 +84,10 @@
                 <tr class="lista">
                     <td scope="row" style="text-align: center;">{{produto[0]}}</td>
                     <td class="descricao_produto">{{produto[1]}}</td>
+                    <td class="estoque_produto"></td>
+                    <td class="preco_produto">R$ {{produto[4]}}</td>
+                    <td><a class="acao_produto"><i class="fa-solid fa-pen-to-square fa-lg"></i></a></td>
+                    <td><a class="acao_produto" href="/deletar/produto/{{produto[0]}}"><i class="fa-solid fa-circle-xmark fa-lg"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -126,6 +135,39 @@
             });
             
         });
+
+        let input = document.getElementById("img_prod");
+
+        $('#foto_prod').on('click', function(){
+            $('#img_prod').trigger('click');
+        })
+
+        $('#img_prod').on('change', function(){
+            arquivo = $(this)[0].files[0]
+            if($(this)[0].files.length > 0){
+                let fileReader = new FileReader()
+                fileReader.onloadend = function(){
+                    $('#foto_prod').attr('src', fileReader.result)
+                }
+                fileReader.readAsDataURL(arquivo)
+            }
+        })
+
+        $('#btn-limpar').on('click', function(){
+            $('input').each(
+                function(){
+                    $(this).val("")
+                }
+            )
+
+            $('select').each(
+                function(){
+                    $(this).val("")
+                }
+            )
+
+            $('#foto_prod').attr('src', "https://st2.depositphotos.com/6831718/10851/v/600/depositphotos_108517590-stock-illustration-photo-camera-icon-photo-camera.jpg")
+        })
 
     </script>
 
