@@ -95,14 +95,36 @@ class cadastro_produto_controller(MethodView):
                 arquivo, extensao = os.path.splitext(nome_arquivo_img)
                 DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img\\produtos"
                 
-                cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm, proimg) VALUES(null, %s, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm, "img-" + prodes + extensao))
+                if(nome_arquivo_img == ''):
+                    cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm) VALUES(null, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm))
+                else:
+                    cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm, proimg) VALUES(null, %s, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm, "img-" + prodes + extensao))
+                    proimg.save(os.path.join(DIRETORIO, "img-" + prodes + extensao))
                 cur.connection.commit()
-                proimg.save(os.path.join(DIRETORIO, "img-" + prodes + extensao))
 
                 flash("Cadastro realizado com sucesso!", "sucess")
             except:
                 flash("Erro no cadastro.", "error")
         return redirect("/cadastro/produto")
+    
+class atualizar_produto_controller(MethodView):
+    login_required
+    def post(self, procod):
+        prodes = request.form["prodes"]
+        prosec = request.form["prosec"]
+        proprc = request.form["proprc"]
+        protrib = request.form["protrib"]
+        proncm = request.form["proncm"]
+        proimg = request.files.get("img_prod")
+
+        with mysql.cursor() as cur:
+            try:
+                cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s, proimg = %s where procod = %s', (prodes, prosec, proprc, protrib, proncm, proimg, procod))
+                cur.connection.commit()
+                flash("Cadastro realizado com sucesso!", 'sucess')
+            except:
+                flash("Erro ao atualizar cadastro!", 'error')
+            return redirect('/cadastro/produto')
     
 class delete_produto_controller(MethodView):
     @login_required
@@ -206,6 +228,7 @@ def nao_encontrado(e):
 routes = {
     "login": "/", "login_controller":login_controller.as_view("login"),
     "cadastro_produto":"/cadastro/produto", "cadastro_produto_controller":cadastro_produto_controller.as_view("cadastro_produto"),
+    "atualizar_produto":"/atualizar/produto/<int:procod>", "atualizar_produto_controller":atualizar_produto_controller.as_view("atualizar_produto"),
     "deletar_produto":"/deletar/produto/<int:procod>", "delete_produto_controller":delete_produto_controller.as_view("deletar_produto"),
     "get_secao":"/get/secao", "get_secao_controller":get_secao_controller.as_view("get_secao"),
     "cadastro_secao":"/cadastro/secao", "cadastro_secao_controller":cadastro_secao_controller.as_view("cadastro_secao"),
@@ -218,6 +241,7 @@ routes = {
 
 app.add_url_rule(routes["login"], view_func=routes["login_controller"])
 app.add_url_rule(routes["cadastro_produto"], view_func=routes["cadastro_produto_controller"])
+app.add_url_rule(routes["atualizar_produto"], view_func=routes["atualizar_produto_controller"])
 app.add_url_rule(routes["deletar_produto"], view_func=routes["delete_produto_controller"])
 app.add_url_rule(routes["get_secao"], view_func=routes["get_secao_controller"])
 app.add_url_rule(routes["cadastro_secao"], view_func=routes["cadastro_secao_controller"])

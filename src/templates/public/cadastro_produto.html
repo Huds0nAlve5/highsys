@@ -5,7 +5,7 @@
         <label for=""></label>
         <input type="text" placeholder="Buscar por produto" id="busca_produto" name="profilter">
 
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="btn-src-prod">
             Novo produto
         </button>
     </form>
@@ -23,10 +23,10 @@
             <div class="modal-body">
                 <form method="POST" enctype="multipart/form-data" id="form-cadastro">
                     <label for="descricao" class="label_block">Descrição</label>
-                    <input type="text" name="prodes" class="upper_text" maxlength="60">
+                    <input type="text" name="prodes" class="upper_text" maxlength="60" required="true">
 
                     <label for="secao" class="label_block">Seção</label>
-                    <select name="prosec" id="select_secao">
+                    <select name="prosec" id="select_secao" required="true">
                         <option value="">---------</option>
                         {% for secao in secoes %}
                             <option value="{{secao[0]}}">{{secao[1]}}</option>
@@ -36,10 +36,10 @@
                     <a id="atualiza_secao"><i class="fa-solid fa-arrows-rotate"></i></a>
 
                     <label for="preco" class="label_block">Preço</label>
-                    <input type="number" name="proprc" step="0.01" min="0.01">
+                    <input type="number" name="proprc" step="0.01" min="0.01" placeholder="R$ 0,00" required="true">
                     
                     <label for="tributacao" class="label_block">Tributação</label>
-                    <select name="protrib">
+                    <select name="protrib" required="true">
                         <option value="">---------</option>
                         {% for tributacao in tributacoes %}
                             <option value="{{tributacao[0]}}">{{tributacao[0]}}</option>
@@ -47,7 +47,7 @@
                     </select>
 
                     <label for="ncm" class="label_block">NCM</label>
-                    <select name="proncm">
+                    <select name="proncm" required="true">
                         <option value="">---------</option>
                         {% for ncm in ncms %}
                             <option value="{{ncm[0]}}">{{ncm[0]}}</option>
@@ -82,35 +82,94 @@
         <tbody>
             {% for produto in produtos %}
                 <tr class="lista">
-                    <td scope="row" style="text-align: center;">{{produto[0]}}</td>
+                    <td scope="row" style="text-align: center;" id="procod">{{produto[0]}}</td>
                     <td class="descricao_produto">{{produto[1]}}</td>
                     <td class="estoque_produto"></td>
                     <td class="preco_produto">R$ {{produto[4]}}</td>
-                    <td><a class="acao_produto"><i class="fa-solid fa-pen-to-square fa-lg"></i></a></td>
-                    <td><a class="acao_produto" href="/deletar/produto/{{produto[0]}}"><i class="fa-solid fa-circle-xmark fa-lg"></i></a></td>
+                    <td><a class="acao_produto" data-toggle="modal" data-target="#modalAlterar" id="btn-prod-alterar" onclick="alterarProduto('{{produto[0]}}CONCAT' + '{{produto[1]}}CONCAT' + '{{produto[2]}}CONCAT' + '{{produto[3]}}CONCAT' + '{{produto[4]}}CONCAT' + '{{produto[5]}}CONCAT' + '{{produto[6]}}CONCAT' + '{{produto[7]}}CONCAT')"><i class="fa-solid fa-pen-to-square fa-lg"></i></a></td>
+                    <td><a class="acao_produto" data-toggle="modal" data-target="#modalExcluir" id="btn-prod-excluir"  onclick="codAExcluir('{{produto[0]}}')"><i class="fa-solid fa-circle-xmark fa-lg"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>
       </table>
 
-      <!--
-      <script>
-        var xhr = new XMLHttpRequest();
-        var documento;
+      <div class="modal fade" id="modalExcluir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Atenção!</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Confirma exclusão do produto?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+              <a id="a-prod-excluir"><button type="button" class="btn btn-primary">Excluir</button></a>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        xhr.response = "json";
+      <div class="modal fade" id="modalAlterar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Alterar produto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data" id="form-atualiza">
+                    <label for="descricao" class="label_block">Descrição</label>
+                    <input type="text" name="prodes" class="upper_text" maxlength="60" required="true" id="prodescupdt">
 
-        xhr.onreadystatechange = function(){
-            if(xhr.readyState == 4 && xhr.status == 200)
-                documento=xhr.response;
-                console.log(documento);
-        }
+                    <label for="secao" class="label_block">Seção</label>
+                    <select name="prosec" id="prosecupdt" required="true">
+                        <option value="">---------</option>
+                        {% for secao in secoes %}
+                            <option value="{{secao[0]}}">{{secao[1]}}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="/cadastro/secao" target="_blank"><i class="fa-solid fa-circle-plus"></i></a>
+                    <a id="atualiza_secao"><i class="fa-solid fa-arrows-rotate"></i></a>
 
-        xhr.open("GET", "https://railway.app/project/7c7b1cf4-29ec-475f-beda-a54c155928fe/plugin/93776095-b346-4746-8c62-b7499d212b36/data?state=table&table=produto");
+                    <label for="preco" class="label_block">Preço</label>
+                    <input type="number" name="proprc" id="proprcupdt" step="0.01" min="0.01" placeholder="R$ 0,00" required="true">
+                    
+                    <label for="tributacao" class="label_block">Tributação</label>
+                    <select name="protrib" id='protribupdt' required="true">
+                        <option value="">---------</option>
+                        {% for tributacao in tributacoes %}
+                            <option value="{{tributacao[0]}}">{{tributacao[0]}}</option>
+                        {% endfor %}
+                    </select>
 
-        xhr.send();
+                    <label for="ncm" class="label_block">NCM</label>
+                    <select name="proncm" id='proncmupdt' required="true">
+                        <option value="">---------</option>
+                        {% for ncm in ncms %}
+                            <option value="{{ncm[0]}}">{{ncm[0]}}</option>
+                        {% endfor %}
+                    </select>
 
-      </script> -->
+                    <img id="foto_prod_updt" src="https://st2.depositphotos.com/6831718/10851/v/600/depositphotos_108517590-stock-illustration-photo-camera-icon-photo-camera.jpg">
+                    <input type="file" name="img_prod" id="img_prod_updt" accept="image/jpg, image/jpeg, image/png" style="display: none;">
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-limpar-updt" class="btn btn-secondary">Limpar</button>
+                    <a id="a-prod-alterar"><button type="submit" class="btn btn-primary">Alterar</button></a>
+                </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script type="text/javascript">
         $('#busca_produto').keyup(function() {
@@ -136,8 +195,6 @@
             
         });
 
-        let input = document.getElementById("img_prod");
-
         $('#foto_prod').on('click', function(){
             $('#img_prod').trigger('click');
         })
@@ -148,6 +205,21 @@
                 let fileReader = new FileReader()
                 fileReader.onloadend = function(){
                     $('#foto_prod').attr('src', fileReader.result)
+                }
+                fileReader.readAsDataURL(arquivo)
+            }
+        })
+
+        $('#foto_prod_updt').on('click', function(){
+            $('#img_prod_updt').trigger('click');
+        })
+
+        $('#img_prod_updt').on('change', function(){
+            arquivo = $(this)[0].files[0]
+            if($(this)[0].files.length > 0){
+                let fileReader = new FileReader()
+                fileReader.onloadend = function(){
+                    $('#foto_prod_updt').attr('src', fileReader.result)
                 }
                 fileReader.readAsDataURL(arquivo)
             }
@@ -169,6 +241,38 @@
             $('#foto_prod').attr('src', "https://st2.depositphotos.com/6831718/10851/v/600/depositphotos_108517590-stock-illustration-photo-camera-icon-photo-camera.jpg")
         })
 
+        $('#btn-limpar-updt').on('click', function(){
+            $('input').each(
+                function(){
+                    $(this).val("")
+                }
+            )
+
+            $('select').each(
+                function(){
+                    $(this).val("")
+                }
+            )
+
+            $('#foto_prod').attr('src', "https://st2.depositphotos.com/6831718/10851/v/600/depositphotos_108517590-stock-illustration-photo-camera-icon-photo-camera.jpg")
+        })
+
+        function codAExcluir(codProduto){
+            $('#a-prod-excluir').attr('href', '/deletar/produto/' + codProduto)
+        }
+
+        function alterarProduto(produto){
+            infoProduto = produto.split('CONCAT')
+            $('#form-atualiza').attr('action', '/atualizar/produto/' + infoProduto[0]);
+            $('#prodescupdt').val(infoProduto[1]);
+            $('#prosecupdt').val(infoProduto[2])
+            $('#proprcupdt').val(infoProduto[4])
+            $('#protribupdt').val(infoProduto[5])
+            $('#proncmupdt').val(infoProduto[6])
+            if(infoProduto[7] != "None")
+                $('#foto_prod_updt').attr('src', "../../static/img/produtos/" + infoProduto[7])
+        }
+        
     </script>
 
 {% endblock %}
