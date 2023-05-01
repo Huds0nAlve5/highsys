@@ -108,7 +108,7 @@ class cadastro_produto_controller(MethodView):
         return redirect("/cadastro/produto")
     
 class atualizar_produto_controller(MethodView):
-    login_required
+    @login_required
     def post(self, procod):
         prodes = request.form["prodes"]
         prosec = request.form["prosec"]
@@ -119,7 +119,16 @@ class atualizar_produto_controller(MethodView):
 
         with mysql.cursor() as cur:
             try:
-                cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s, proimg = %s where procod = %s', (prodes, prosec, proprc, protrib, proncm, proimg, procod))
+                nome_arquivo_img = proimg.filename
+                arquivo, extensao = os.path.splitext(nome_arquivo_img)
+                DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img\\produtos"
+
+                if(nome_arquivo_img == ''):
+                    cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s where procod = %s', (prodes, prosec, proprc, protrib, procod))
+                else:
+                    cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s, proimg = %s where procod = %s', (prodes, prosec, proprc, protrib, proncm, "img-" + prodes + extensao, procod))
+                    proimg.save(os.path.join(DIRETORIO, "img-" + prodes + extensao))
+                    
                 cur.connection.commit()
                 flash("Cadastro realizado com sucesso!", 'sucess')
             except:
