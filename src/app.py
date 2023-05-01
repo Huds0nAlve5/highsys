@@ -81,6 +81,7 @@ class cadastro_produto_controller(MethodView):
             ncms = cur.fetchall()
         return render_template("public/cadastro_produto.html", produtos=produtos, secoes=secoes, tributacoes=tributacoes, ncms=ncms)
     
+    @login_required
     def post(self):
         prodes = request.form["prodes"]
         prosec = request.form["prosec"]
@@ -116,7 +117,7 @@ class atualizar_produto_controller(MethodView):
         protrib = request.form["protrib"]
         proncm = request.form["proncm"]
         proimg = request.files.get("img_prod")
-
+        
         with mysql.cursor() as cur:
             try:
                 nome_arquivo_img = proimg.filename
@@ -124,7 +125,7 @@ class atualizar_produto_controller(MethodView):
                 DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img\\produtos"
 
                 if(nome_arquivo_img == ''):
-                    cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s where procod = %s', (prodes, prosec, proprc, protrib, procod))
+                    cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s where procod = %s', (prodes, prosec, proprc, protrib, proncm, procod))
                 else:
                     cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s, proimg = %s where procod = %s', (prodes, prosec, proprc, protrib, proncm, "img-" + prodes + extensao, procod))
                     proimg.save(os.path.join(DIRETORIO, "img-" + prodes + extensao))
@@ -148,9 +149,11 @@ class delete_produto_controller(MethodView):
             return redirect("/cadastro/produto")
     
 class cadastro_secao_controller(MethodView):
+    @login_required
     def get(self):
         app.permanent_session_lifetime = timedelta(minutes=30)
         return render_template("public/cadastro_secao.html")
+    @login_required
     def post(self):
         secdes = request.form["secdes"]
 
@@ -164,6 +167,7 @@ class cadastro_secao_controller(MethodView):
         return redirect("/")
 
 class get_secao_controller(MethodView):
+    @login_required
     def get(self):
         app.permanent_session_lifetime = timedelta(minutes=30)
         with mysql.cursor() as cur:

@@ -1,3 +1,3 @@
 import pymysql
 
-mysql = pymysql.connect(host='containers-us-west-178.railway.app', port=5542, user='root', password='aUXNZIFxKInxURJW9TsP', database='railway')
+mysql = pymysql.connect(host='localhost', port=3306, user='root', password='', database='highsys')

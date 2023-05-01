@@ -86,32 +86,12 @@
                     <td class="descricao_produto">{{produto[1]}}</td>
                     <td class="estoque_produto"></td>
                     <td class="preco_produto">R$ {{produto[4]}}</td>
-                    <td><a class="acao_produto" data-toggle="modal" data-target="#modalAlterar" id="btn-prod-alterar" onclick="alterarProduto('{{produto[0]}}CONCAT' + '{{produto[1]}}CONCAT' + '{{produto[2]}}CONCAT' + '{{produto[3]}}CONCAT' + '{{produto[4]}}CONCAT' + '{{produto[5]}}CONCAT' + '{{produto[6]}}CONCAT' + '{{produto[7]}}CONCAT')"><i class="fa-solid fa-pen-to-square fa-lg"></i></a></td>
+                    <td><a class="acao_produto" data-toggle="modal" data-target="#modalAlterar" id="btn-prod-alterar" onclick="alterarProduto(['{{produto[0]}}', '{{produto[1]}}', '{{produto[2]}}', '{{produto[3]}}', '{{produto[4]}}', '{{produto[5]}}', '{{produto[6]}}', '{{produto[7]}}'])"><i class="fa-solid fa-pen-to-square fa-lg"></i></a></td>
                     <td><a class="acao_produto" data-toggle="modal" data-target="#modalExcluir" id="btn-prod-excluir"  onclick="codAExcluir('{{produto[0]}}')"><i class="fa-solid fa-circle-xmark fa-lg"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>
       </table>
-
-      <div class="modal fade" id="modalExcluir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Atenção!</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              Confirma exclusão do produto?
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-              <a id="a-prod-excluir"><button type="button" class="btn btn-primary">Excluir</button></a>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div class="modal fade" id="modalAlterar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -170,6 +150,26 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalExcluir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Atenção!</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Confirma exclusão do produto?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+              <a id="a-prod-excluir"><button type="button" class="btn btn-primary">Excluir</button></a>
+            </div>
+          </div>
+        </div>
+      </div>
 
     <script type="text/javascript">
         $('#busca_produto').keyup(function() {
@@ -261,8 +261,7 @@
             $('#a-prod-excluir').attr('href', '/deletar/produto/' + codProduto)
         }
 
-        function alterarProduto(produto){
-            infoProduto = produto.split('CONCAT')
+        function alterarProduto(infoProduto){
             $('#form-atualiza').attr('action', '/atualizar/produto/' + infoProduto[0]);
             $('#prodescupdt').val(infoProduto[1]);
             $('#prosecupdt').val(infoProduto[2])
