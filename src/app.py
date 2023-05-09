@@ -94,7 +94,7 @@ class cadastro_produto_controller(MethodView):
             try:
                 nome_arquivo_img = proimg.filename
                 arquivo, extensao = os.path.splitext(nome_arquivo_img)
-                DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img\\produtos"
+                DIRETORIO = "C:\\Users\\Firmino\\Desktop\\highsys\\highsys\\src\\static\\img\\produtos"
                 
                 if(nome_arquivo_img == ''):
                     cur.execute("INSERT INTO produto(procod, prodes, prosec, proprc, protrib, proncm) VALUES(null, %s, %s, %s, %s, %s)", (prodes, prosec, proprc, protrib, proncm))
@@ -122,7 +122,7 @@ class atualizar_produto_controller(MethodView):
             try:
                 nome_arquivo_img = proimg.filename
                 arquivo, extensao = os.path.splitext(nome_arquivo_img)
-                DIRETORIO = "C:\\Users\\Hudson\\Desktop\\Programação\\Projetos\\Python\\Flask com SQL\\Cadastro de produtos\\src\\static\\img\\produtos"
+                DIRETORIO = "C:\\Users\\Firmino\\Desktop\\highsys\\highsys\\src\\static\\img\\produtos"
 
                 if(nome_arquivo_img == ''):
                     cur.execute('UPDATE produto set prodes = %s, prosec = %s, proprc = %s, protrib = %s, proncm = %s where procod = %s', (prodes, prosec, proprc, protrib, proncm, procod))
@@ -140,12 +140,10 @@ class delete_produto_controller(MethodView):
     @login_required
     def get(self, procod):
         with mysql.cursor() as cur:
-            try:
-                cur.execute("delete from produto where procod = %s", (procod))
-                cur.connection.commit()
-                flash("Produto excluído com sucesso", "sucess")
-            except:
-                flash("Erro na exclusão de produtos", "error")
+            cur.execute("delete from produto where procod = %s", (procod))
+            cur.connection.commit()
+            flash("Produto excluído com sucesso", "sucess")
+            
             return redirect("/cadastro/produto")
     
 class cadastro_secao_controller(MethodView):

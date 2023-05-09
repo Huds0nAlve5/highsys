@@ -33,9 +33,16 @@ CREATE TABLE IF NOT EXISTS ncm(
     PRIMARY KEY(ncm)
 );
 
+CREATE TABLE IF NOT EXISTS estoque(
+    procod INT(9) UNSIGNED ZEROFILL NOT NULL,
+    proest NUMERIC(10,2),
+    PRIMARY KEY(procod)
+);
+
 ALTER TABLE produto ADD FOREIGN KEY (prosec)REFERENCES secao(seccod);
 ALTER TABLE produto ADD FOREIGN KEY (protrib)REFERENCES tributacao(tribcod);
 ALTER TABLE produto ADD FOREIGN KEY (proncm)REFERENCES ncm(ncm);
+ALTER TABLE estoque ADD FOREIGN KEY (procod)REFERENCES produto(procod);
 
 INSERT INTO tributacao VALUES("F00");
 INSERT INTO tributacao VALUES("T18");
@@ -45,5 +52,16 @@ INSERT INTO ncm VALUES("00000000");
 INSERT INTO ncm VALUES("11111111");
 INSERT INTO ncm VALUES("22222222");
 INSERT INTO ncm VALUES("33333333");
+
+create trigger iniciar_estoque
+after insert
+on produto
+for each row
+	insert into estoque values(new.procod, 0);
+
+CREATE TRIGGER exclusao_produto BEFORE DELETE ON produto
+FOR EACH ROW
+    DELETE FROM estoque WHERE procod = OLD.procod;
+
 
 INSERT INTO usuario VALUES(1, "hudsonalves", "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4")
